@@ -13,6 +13,7 @@ import random
 import re
 import traceback
 
+import xbmc
 import xbmcplugin
 
 from ... import kodion
@@ -24,6 +25,9 @@ from ...youtube.helper import utils, v3
 
 
 def play_video(provider, context):
+    context.get_ui().set_home_window_property('try_play', 'True')
+    tp_prop = xbmc.getInfoLabel('Window(home).Property("plugin.video.youtube-try_play")')
+    context.log_debug(f'set home property try_play: {tp_prop}')
     try:
         video_id = context.get_param('video_id')
 
@@ -51,11 +55,15 @@ def play_video(provider, context):
         except YouTubeException as e:
             context.get_ui().show_notification(message=e.get_message())
             context.log_error(traceback.print_exc())
+            context.get_ui().clear_home_window_property('try_play')
+            context.log_debug('clear home property try_play')
             return False
 
         if len(video_streams) == 0:
             message = context.localize(provider.LOCAL_MAP['youtube.error.no_video_streams_found'])
             context.get_ui().show_notification(message, time_milliseconds=5000)
+            context.get_ui().clear_home_window_property('try_play')
+            context.log_debug('clear home property try_play')
             return False
 
         video_stream = kodion.utils.select_stream(context, video_streams, ask_for_quality=ask_for_quality, audio_only=audio_only)
@@ -69,6 +77,8 @@ def play_video(provider, context):
         if is_video and video_stream['video'].get('rtmpe', False):
             message = context.localize(provider.LOCAL_MAP['youtube.error.rtmpe_not_supported'])
             context.get_ui().show_notification(message, time_milliseconds=5000)
+            context.get_ui().clear_home_window_property('try_play')
+            context.log_debug('clear home property try_play')
             return False
 
         play_suggested = settings.get_bool('youtube.suggested_videos', False)
@@ -127,12 +137,16 @@ def play_video(provider, context):
             'channel_id': playback_json.get('channel_id', ''),
             'status': playback_json.get('video_status', {})
         })
+        context.get_ui().clear_home_window_property('try_play')
+        context.log_debug('clear home property try_play')
         xbmcplugin.setResolvedUrl(handle=context.get_handle(), succeeded=True, listitem=item)
 
     except YouTubeException as ex:
         message = ex.get_message()
         message = kodion.utils.strip_html_from_text(message)
         context.get_ui().show_notification(message, time_milliseconds=15000)
+        context.get_ui().clear_home_window_property('try_play')
+        context.log_debug('clear home property try_play')
 
 
 def play_playlist(provider, context):
