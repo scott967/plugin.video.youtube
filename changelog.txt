@@ -1,3 +1,12 @@
+## v7.2.0+beta.3
+### Fixed
+- Fix possible exception in creating request clients if client_data is not provided
+
+### Changed
+- Proxy stream requests using HTTPServer #527 #1040
+  - Correct primary video server url #1040
+  - Allow skipping adaptive formats for clients that may need PO tokens #1040
+
 ## v7.2.0+beta.2
 ### Fixed
 - Fix audio langauge fallback selection #989 #1036
