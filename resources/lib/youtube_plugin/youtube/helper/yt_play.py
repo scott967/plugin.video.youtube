@@ -22,6 +22,7 @@ from ...kodion.constants import (
     CONTENT,
     PATHS,
     PLAYBACK_INIT,
+    PLAYBACK_FAILED,
     PLAYER_DATA,
     PLAYLIST_PATH,
     PLAYLIST_POSITION,
@@ -364,6 +365,7 @@ def process(provider, context, **_kwargs):
                                 items[position - 1]['file'])
                 ui.set_property(PLAYLIST_POSITION, str(position))
         else:
+            context.send_notification(PLAYBACK_FAILED, {'video_id': video_id})
             ui.clear_property(BUSY_FLAG)
             for param in force_play_params:
                 ui.clear_property(param)
