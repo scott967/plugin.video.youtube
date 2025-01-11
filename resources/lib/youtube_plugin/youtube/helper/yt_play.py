@@ -22,6 +22,7 @@ from ...kodion.constants import (
     CONTENT,
     PATHS,
     PLAYBACK_INIT,
+    PLAYBACK_FAILED,
     PLAYER_DATA,
     PLAYLIST_PATH,
     PLAYLIST_POSITION,
@@ -32,7 +33,6 @@ from ...kodion.constants import (
     PLAY_TIMESHIFT,
     PLAY_WITH,
     SERVER_WAKEUP,
-    PLAYBACK_FAILED,
 )
 from ...kodion.items import AudioItem, UriItem, VideoItem
 from ...kodion.network import get_connect_address
@@ -46,7 +46,6 @@ def _play_stream(provider, context):
     if not video_id:
         message = context.localize('error.no_video_streams_found')
         ui.show_notification(message, time_ms=5000)
-        context.send_notification(PLAYBACK_FAILED, {'video_id': 'None'})
         return False
 
     client = provider.get_client(context)
@@ -91,13 +90,11 @@ def _play_stream(provider, context):
                            stack=''.join(format_stack())))
             context.log_error(msg)
             ui.show_notification(message=exc.get_message())
-            context.send_notification(PLAYBACK_FAILED, {'video_id': video_id})
             return False
 
         if not streams:
             message = context.localize('error.no_video_streams_found')
             ui.show_notification(message, time_ms=5000)
-            context.send_notification(PLAYBACK_FAILED, {'video_id': video_id})
             return False
 
         stream = select_stream(
@@ -109,14 +106,12 @@ def _play_stream(provider, context):
         )
 
         if stream is None:
-            context.send_notification(PLAYBACK_FAILED, {'video_id': video_id})
             return False
 
     video_type = stream.get('video')
     if video_type and video_type.get('rtmpe'):
         message = context.localize('error.rtmpe_not_supported')
         ui.show_notification(message, time_ms=5000)
-        context.send_notification(PLAYBACK_FAILED, {'video_id': video_id})
         return False
 
     play_suggested = settings.get_bool('youtube.suggested_videos', False)
@@ -365,6 +360,7 @@ def process(provider, context, **_kwargs):
                                 items[position - 1]['file'])
                 ui.set_property(PLAYLIST_POSITION, str(position))
         else:
+            context.send_notification(PLAYBACK_FAILED, {'video_id': video_id})
             ui.clear_property(BUSY_FLAG)
 
         return media_item

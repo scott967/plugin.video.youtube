@@ -58,12 +58,12 @@ VIDEO_ID = 'video_id'
 
 # Events
 CHECK_SETTINGS = 'check_settings'
+PLAYBACK_FAILED = 'playback_failed'
 PLAYBACK_INIT = 'playback_init'
 PLAYBACK_STARTED = 'playback_started'
 PLAYBACK_STOPPED = 'playback_stopped'
 REFRESH_CONTAINER = 'refresh_container'
 RELOAD_ACCESS_MANAGER = 'reload_access_manager'
-PLAYBACK_FAILED = 'playback_failed'
 
 # Sleep/wakeup states
 PLUGIN_WAKEUP = 'plugin_wakeup'
@@ -120,12 +120,12 @@ __all__ = (
 
     # Events
     'CHECK_SETTINGS',
+    'PLAYBACK_FAILED',
     'PLAYBACK_INIT',
     'PLAYBACK_STARTED',
     'PLAYBACK_STOPPED',
     'REFRESH_CONTAINER',
     'RELOAD_ACCESS_MANAGER',
-    'PLAYBACK_FAILED',
 
     # Sleep/wakeup states
     'PLUGIN_SLEEPING',
