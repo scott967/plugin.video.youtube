@@ -35,6 +35,7 @@ from ..constants import (
     WINDOW_FALLBACK,
     WINDOW_REPLACE,
     WINDOW_RETURN,
+    WINDOW_SKIP,
 )
 from ..json_store import AccessManager
 from ..sql_store import (
@@ -79,6 +80,7 @@ class AbstractContext(Logger):
         WINDOW_FALLBACK,
         WINDOW_REPLACE,
         WINDOW_RETURN,
+        WINDOW_SKIP,
     }
     _INT_PARAMS = {
         'fanart_type',

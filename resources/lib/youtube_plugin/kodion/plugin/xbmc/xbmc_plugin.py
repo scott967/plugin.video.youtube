@@ -34,6 +34,7 @@ from ...constants import (
     WINDOW_FALLBACK,
     WINDOW_REPLACE,
     WINDOW_RETURN,
+    WINDOW_SKIP,
 )
 from ...exceptions import KodionException
 from ...items import (
@@ -291,15 +292,20 @@ class XbmcPlugin(AbstractPlugin):
             context.set_path(PATHS.PLAY)
             return self.run(provider, context, focused=focused)
 
+        window_skip = ui.pop_property(WINDOW_SKIP)
+        if window_skip and handle != -1:
+            context.execute('Action(Back)', wait=True)
+
         xbmcplugin.endOfDirectory(
             handle,
             succeeded=succeeded,
             updateListing=update_listing,
             cacheToDisc=cache_to_disc,
         )
+
         container = ui.pop_property(CONTAINER_ID)
         position = ui.pop_property(CONTAINER_POSITION)
-        if container and position:
+        if not window_skip and container and position:
             context.send_notification(CONTAINER_FOCUS, [container, position])
 
         if isinstance(post_run_action, tuple):
