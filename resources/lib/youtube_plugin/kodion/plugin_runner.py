@@ -47,7 +47,12 @@ def run(context=_context,
     context.init()
     new_uri = context.get_uri()
 
-    params = context.get_params().copy()
+    forced = current_uri == new_uri
+    params = context.get_params()
+    if forced and 'refresh' in params:
+        del params['refresh']
+
+    params = params.copy()
     for key in ('api_key', 'client_id', 'client_secret'):
         if key in params:
             params[key] = '<redacted>'
@@ -66,7 +71,7 @@ def run(context=_context,
                                path=context.get_path(),
                                params=params))
 
-    plugin.run(provider, context, focused=(current_uri == new_uri))
+    plugin.run(provider, context, forced=forced)
 
     if debug:
         profiler.print_stats()
